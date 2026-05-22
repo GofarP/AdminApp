@@ -171,7 +171,7 @@ fun CalculatorScreen(modifier: Modifier= Modifier){
 
         CustomButton(
             text = if (choosenMode == "Concat") "Gabungkan Kata" else "Hitung Angka",
-            colorType = if (choosenMode == "Concat") ButtonColorType.PRIMARY else ButtonColorType.SUCCESS,
+            colorType = ButtonColorType.PRIMARY,
             modifier = Modifier.fillMaxWidth(),
             onClick = {
                 if(number1.isEmpty() || number2.isEmpty()){

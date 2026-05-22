@@ -1,24 +1,27 @@
 package com.gopro.AdminApp.ui.theme.components
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
-enum class ButtonColorType{
-    PRIMARY,
-    SUCCESS,
-    DANGER,
-    SECONDARY
+enum class ButtonColorType {
+    PRIMARY, SUCCESS, DANGER, SECONDARY
 }
 
 @Composable
@@ -26,68 +29,65 @@ fun CustomButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    colorType: ButtonColorType = ButtonColorType.PRIMARY // Nilai default jika tidak diatur
+    isLoading: Boolean = false,
+    enabled: Boolean = true,
+    colorType: ButtonColorType = ButtonColorType.PRIMARY
 ){
-    val buttonColors = when (colorType) {
-        ButtonColorType.PRIMARY -> ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF2196F3), // Biru
-            contentColor = Color.White
-        )
-        ButtonColorType.SUCCESS -> ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF4CAF50), // Hijau
-            contentColor = Color.White
-        )
-        ButtonColorType.DANGER -> ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFE53935), // Merah
-            contentColor = Color.White
-        )
-        ButtonColorType.SECONDARY -> ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF757575), // Abu-abu
-            contentColor = Color.White
-        )
+    val containerColor = when (colorType) {
+        ButtonColorType.PRIMARY -> Color(0xFF0F62FE)
+        ButtonColorType.SUCCESS -> Color(0xFF10B981)
+        ButtonColorType.DANGER -> Color(0xFFEF4444)
+        ButtonColorType.SECONDARY -> Color(0xFF6B7280)
     }
 
-    Button(
+    val disabledContainerColor = when (colorType) {
+        ButtonColorType.PRIMARY -> Color(0xFF7FA8FF)
+        ButtonColorType.SUCCESS -> Color(0xFF6EE7B7)
+        ButtonColorType.DANGER -> Color(0xFFFCA5A5)
+        ButtonColorType.SECONDARY -> Color(0xFFD1D5DB)
+    }
+
+    ElevatedButton(
         onClick = onClick,
-        colors = buttonColors,
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Text(text = text)
-    }
-}
-@Preview(showBackground = true)
-@Composable
-fun CustomButtonPreview() {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
+        modifier = modifier
             .fillMaxWidth()
+            .height(56.dp),
+        shape = RoundedCornerShape(16.dp),
+        enabled = enabled && !isLoading,
+        colors = ButtonDefaults.elevatedButtonColors(
+            containerColor = containerColor,
+            contentColor = Color.White,
+            disabledContainerColor = disabledContainerColor,
+            disabledContentColor = Color.White
+        ),
+        elevation = ButtonDefaults.elevatedButtonElevation(
+            defaultElevation = 4.dp,
+            pressedElevation = 8.dp
+        )
     ) {
-        CustomButton(
-            text = "Tombol Utama (Primary)",
-            onClick = {},
-            colorType = ButtonColorType.PRIMARY
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        CustomButton(
-            text = "Tombol Sukses (Success)",
-            onClick = {},
-            colorType = ButtonColorType.SUCCESS
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        CustomButton(
-            text = "Tombol Bahaya (Danger)",
-            onClick = {},
-            colorType = ButtonColorType.DANGER
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        CustomButton(
-            text = "Tombol Batalkan (Secondary)",
-            onClick = {},
-            colorType = ButtonColorType.SECONDARY
-        )
+        if(isLoading){
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ){
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = Color.White,
+                    strokeWidth = 2.dp
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Memuat...",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }else{
+            Text(
+                text = text,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
