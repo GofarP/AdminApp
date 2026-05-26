@@ -1,4 +1,4 @@
-package com.gopro.AdminApp.model
+package com.gopro.AdminApp.model.dto.response.auth
 
 import com.google.gson.annotations.SerializedName
 
@@ -10,10 +10,10 @@ data class LoginResponse(
     val refreshToken: String?,
 
     @SerializedName("email")
-    val email: String?,
+    val email: String,
 
     @SerializedName("fullName")
-    val fullName: String?,
+    val fullName: String,
 
     @SerializedName("photoUrl")
     val photoUrl: String?,

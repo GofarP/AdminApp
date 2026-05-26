@@ -35,8 +35,12 @@ fun CustomTextField(
     isPassword: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
     enabled: Boolean = true,
-    isError: Boolean = false,       // Parameter baru untuk mendeteksi status error
-    errorText: String = ""          // Parameter baru untuk menampung pesan teks error
+    isError: Boolean = false,
+    errorText: String = "",
+    singleLine: Boolean = true,
+    minLines: Int = 1,
+    containerColor: Color = Color(0xFFF3F4F6),
+    leadingIcon: @Composable (() -> Unit)? = null
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -55,12 +59,14 @@ fun CustomTextField(
                     color = if (isError) Color(0xFFEF4444) else Color.Transparent,
                     shape = RoundedCornerShape(16.dp)
                 ),
-            singleLine = true,
+            singleLine = singleLine,
+            minLines= minLines,
             shape = RoundedCornerShape(16.dp),
             enabled = enabled,
+            leadingIcon = leadingIcon, // Menyematkan icon di sebelah kiri
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color(0xFFF3F4F6),
-                unfocusedContainerColor = Color(0xFFF3F4F6),
+                focusedContainerColor = containerColor,   // Menggunakan warna dinamis
+                unfocusedContainerColor = containerColor, // Menggunakan warna dinamis
                 disabledContainerColor = Color(0xFFE5E7EB),
                 errorContainerColor = Color(0xFFFEE2E2),
                 focusedIndicatorColor = Color.Transparent,
@@ -74,7 +80,7 @@ fun CustomTextField(
                 if (isPassword) {
                     Text(
                         text = if (passwordVisible) "HIDE" else "SHOW",
-                        color = if (isError) Color(0xFFEF4444) else Color(0xFF0F62FE), // Ikon ikut memerah jika error
+                        color = if (isError) Color(0xFFEF4444) else Color(0xFF0F62FE),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier

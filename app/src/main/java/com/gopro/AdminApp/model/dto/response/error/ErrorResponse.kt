@@ -1,4 +1,4 @@
-package com.gopro.AdminApp.model
+package com.gopro.AdminApp.model.dto.response.error
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,31 +1,13 @@
-package com.gopro.AdminApp
+package com.gopro.AdminApp.presentation.screens
 
-import android.content.Intent
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,50 +15,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.gopro.AdminApp.model.LoginRequest
-import com.gopro.AdminApp.ui.theme.AdminAppTheme
+import com.gopro.AdminApp.model.dto.request.auth.LoginRequest
 import com.gopro.AdminApp.ui.theme.components.CustomButton
 import com.gopro.AdminApp.ui.theme.components.CustomTextField
-import com.gopro.AdminApp.viewmodel.AuthViewModel
+import com.gopro.AdminApp.viewmodel.auth.AuthViewModel
 
-class LoginActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            AdminAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen(modifier = Modifier.padding(innerPadding))
-                }
-            }
-        }
-    }
-}
+import androidx.compose.runtime.collectAsState
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    viewModel: AuthViewModel = viewModel()
+    viewModel: AuthViewModel = viewModel(),
+    onLoginSuccess: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
     val context = LocalContext.current
 
-    LaunchedEffect(viewModel.loginSuccess) {
-        if (viewModel.loginSuccess) {
-            val intent = Intent(context, MainActivity::class.java)
-            context.startActivity(intent)
-            (context as? ComponentActivity)?.finish()
+    val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(state.actionSuccess) {
+        if (state.actionSuccess) {
+            onLoginSuccess()
         }
     }
 
-    LaunchedEffect(viewModel.errorMessage) {
-        viewModel.errorMessage?.let { msg ->
+    LaunchedEffect(state.actionErrorMessage) {
+        state.actionErrorMessage?.let { msg ->
             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
             viewModel.clearGeneralError()
         }
@@ -118,33 +86,16 @@ fun LoginScreen(
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = "Vendinglot",
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = Color(0xFF111827)
-                )
-
+                Text(text = "Vendinglot", fontSize = 26.sp, fontWeight = FontWeight.ExtraBold, color = Color(0xFF111827))
                 Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "SECURE ACCESS",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0F62FE),
-                    letterSpacing = 1.5.sp
-                )
-
+                Text(text = "SECURE ACCESS", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF0F62FE), letterSpacing = 1.5.sp)
                 Spacer(modifier = Modifier.height(40.dp))
 
+                val emailErrorText = state.fieldErrors["Email"] ?: ""
+                val passwordErrorText = state.fieldErrors["Password"] ?: ""
+
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "EMAIL ADDRESS",
-                        color = Color(0xFF6B7280),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Text(text = "EMAIL ADDRESS", color = Color(0xFF6B7280), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
                     CustomTextField(
                         value = email,
@@ -154,34 +105,29 @@ fun LoginScreen(
                         },
                         placeholder = "your@mail.com",
                         keyboardType = KeyboardType.Email,
-                        enabled = !viewModel.isLoading,
-                        isError = viewModel.emailError.isNotEmpty(), // Menyala merah jika ada error
-                        errorText = viewModel.emailError // Menerima teks pesan gagal validasi dari server
+                        enabled = !state.isActionLoading,
+                        isError = emailErrorText.isNotEmpty(),
+                        errorText = emailErrorText
                     )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "PASSWORD",
-                        color = Color(0xFF6B7280),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Text(text = "PASSWORD", color = Color(0xFF6B7280), fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
                     CustomTextField(
                         value = password,
                         onValueChange = {
                             password = it
-                            viewModel.clearPasswordError() // Menghapus pesan error spesifik saat mulai ngetik ulang
+                            viewModel.clearPasswordError()
                         },
                         placeholder = "Masukkan Password Anda",
                         isPassword = true,
                         keyboardType = KeyboardType.Password,
-                        enabled = !viewModel.isLoading,
-                        isError = viewModel.passwordError.isNotEmpty(),
-                        errorText = viewModel.passwordError // Menampilkan "Password wajib diisi." dari server
+                        enabled = !state.isActionLoading,
+                        isError = passwordErrorText.isNotEmpty(),
+                        errorText = passwordErrorText
                     )
                 }
 
@@ -189,7 +135,7 @@ fun LoginScreen(
 
                 CustomButton(
                     text = "Masuk Sekarang",
-                    isLoading = viewModel.isLoading,
+                    isLoading = state.isActionLoading,
                     onClick = {
                         val request = LoginRequest(email, password)
                         viewModel.login(request)
@@ -197,13 +143,5 @@ fun LoginScreen(
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    AdminAppTheme {
-        LoginScreen()
     }
 }

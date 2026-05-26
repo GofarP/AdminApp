@@ -1,4 +1,4 @@
-package com.gopro.AdminApp.model
+package com.gopro.AdminApp.model.dto.request.auth
 
 import com.google.gson.annotations.SerializedName
 
