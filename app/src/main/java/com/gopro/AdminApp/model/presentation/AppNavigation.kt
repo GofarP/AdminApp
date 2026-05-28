@@ -1,5 +1,6 @@
 package com.gopro.AdminApp.presentation
 
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -10,15 +11,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.gopro.AdminApp.data.local.TokenManager
+import com.gopro.AdminApp.model.presentation.screens.PermissionCategoriesScreen
 import com.gopro.AdminApp.presentation.screens.DashboardScreen
 import com.gopro.AdminApp.presentation.screens.DepartmentScreen
 import com.gopro.AdminApp.presentation.screens.LoginScreen
 
 @Composable
-fun AppNavigation(){
-    val context=LocalContext.current
-    val navController=rememberNavController()
-    val tokenManager=remember { TokenManager(context) }
+fun AppNavigation() {
+    val context = LocalContext.current
+    val navController = rememberNavController()
+    val tokenManager = remember { TokenManager(context) }
 
     val forceLogout by TokenManager.forceLogoutEvent.collectAsState()
 
@@ -37,21 +39,30 @@ fun AppNavigation(){
         "login"
     }
 
-    NavHost(navController=navController, startDestination = startScreen){
-        composable("login"){
+    NavHost(navController = navController, startDestination = startScreen) {
+
+        composable("login") {
             LoginScreen(
                 onLoginSuccess = {
-                    navController.navigate("dashboard"){
-                        popUpTo("login"){inclusive=true}
+                    navController.navigate("dashboard") {
+                        popUpTo("login") { inclusive = true }
                     }
                 }
             )
         }
 
-        composable("dashboard"){
+        composable("dashboard") {
             DashboardScreen(
-                onNavigateToDepartment = {
-                    navController.navigate("department")
+                onNavigate = { routeId ->
+                    try {
+                        val targetRoute = routeId.removePrefix("nav_")
+                        navController.navigate(targetRoute)
+                    } catch (e: IllegalArgumentException) {
+                        Toast.makeText(context, "Layar belum tersedia", Toast.LENGTH_SHORT).show()
+                        println("Gagal navigasi: Rute '$routeId' belum didaftarkan di NavHost.")
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 },
                 onNavigateToLogin = {
                     navController.navigate("login") {
@@ -61,8 +72,16 @@ fun AppNavigation(){
             )
         }
 
-        composable("department"){
+        composable("department") {
             DepartmentScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable("permission_categories") {
+            PermissionCategoriesScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 }

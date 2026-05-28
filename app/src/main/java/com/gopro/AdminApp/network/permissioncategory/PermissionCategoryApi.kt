@@ -14,24 +14,24 @@ import retrofit2.http.Query
 
 interface PermissionCategoryApi {
 
-    @GET("api/permissioncategories")
+    @GET("api/permissioncategory")
     suspend fun getPermissionCategories(
         @Query("page")page:Int=1,
         @Query("limit")limit:Int=1
     ): Response<PermissionCategoryResponse>
 
-    @POST("api/permissioncategories")
+    @POST("api/permissioncategory")
     suspend fun insertPermissionCategories(
         @Body request: PermissionCategoriesRequest
     ): Response<Unit>
 
-    @PUT("api/permissioncategories/{id}")
+    @PUT("api/permissioncategory/{id}")
     suspend fun updatePermissionCategories(
         @Path("id") id: Int,
         @Body request: PermissionCategoriesRequest
     ): Response<Unit>
 
-    @DELETE("api/permissioncategories/{id}")
+    @DELETE("api/permissioncategory/{id}")
     suspend fun deletePermissionCategories(
         @Path("id") id: Int
     ): Response<Unit>

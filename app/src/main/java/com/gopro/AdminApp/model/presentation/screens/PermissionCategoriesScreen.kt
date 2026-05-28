@@ -1,4 +1,4 @@
-package com.gopro.AdminApp.presentation.screens
+package com.gopro.AdminApp.model.presentation.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,7 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.gopro.AdminApp.model.entity.Department
+import com.gopro.AdminApp.model.entity.PermissionCategories
 import com.gopro.AdminApp.presentation.components.ConfirmDeleteDialog
 import com.gopro.AdminApp.presentation.components.FormBottomSheet
 import com.gopro.AdminApp.presentation.state.UiState
@@ -52,21 +52,21 @@ import com.gopro.AdminApp.ui.theme.components.CustomSnackbarVisuals
 import com.gopro.AdminApp.ui.theme.components.CustomTextField
 import com.gopro.AdminApp.ui.theme.components.FloatingButton
 import com.gopro.AdminApp.ui.theme.components.SnackbarType
-import com.gopro.AdminApp.viewmodel.department.DepartmentViewModel
+import com.gopro.AdminApp.viewmodel.permissioncategories.PermissionCategoriesViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DepartmentScreen(
+fun PermissionCategoriesScreen(
     onNavigateBack: () -> Unit,
-    viewModel: DepartmentViewModel = viewModel()
+    viewModel: PermissionCategoriesViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsState()
 
     var searchQuery by remember { mutableStateOf("") }
     var showBottomSheet by remember { mutableStateOf(false) }
-    var departmentToDelete by remember { mutableStateOf<Department?>(null) }
+    var permissionCategoriesToDelete by remember { mutableStateOf<PermissionCategories?>(null) }
 
     var currentAction by remember { mutableStateOf("") }
 
@@ -79,12 +79,28 @@ fun DepartmentScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
+    LaunchedEffect(state.actionErrorMessage) {
+        state.actionErrorMessage?.let { msg ->
+            viewModel.clearGeneralError()
+
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    CustomSnackbarVisuals(
+                        message = msg,
+                        type = SnackbarType.ERROR,
+                        duration = SnackbarDuration.Long
+                    )
+                )
+            }
+        }
+    }
+
     LaunchedEffect(state.actionSuccess) {
         if (state.actionSuccess) {
             val message = when (currentAction) {
-                "insert" -> "Data Department berhasil ditambahkan"
-                "update" -> "Data Department berhasil diubah"
-                "delete" -> "Data Department berhasil dihapus"
+                "insert" -> "Data Permission Categories berhasil ditambahkan"
+                "update" -> "Data Permission Categories berhasil diubah"
+                "delete" -> "Data Permission Categories berhasil dihapus"
                 else -> ""
             }
 
@@ -95,7 +111,7 @@ fun DepartmentScreen(
                     inputDesc = ""
                 }
                 "delete" -> {
-                    departmentToDelete = null
+                    permissionCategoriesToDelete = null
                 }
             }
 
@@ -108,27 +124,10 @@ fun DepartmentScreen(
                         CustomSnackbarVisuals(
                             message = message,
                             type = SnackbarType.SUCCESS,
-                            duration = SnackbarDuration.Short
+                            duration = SnackbarDuration.Long
                         )
                     )
                 }
-            }
-        }
-    }
-
-    LaunchedEffect(state.actionErrorMessage) {
-        state.actionErrorMessage?.let { msg ->
-
-            viewModel.clearGeneralError()
-
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(
-                    CustomSnackbarVisuals(
-                        message = msg,
-                        type = SnackbarType.ERROR,
-                        duration = SnackbarDuration.Short
-                    )
-                )
             }
         }
     }
@@ -142,7 +141,7 @@ fun DepartmentScreen(
         containerColor = Background,
         topBar = {
             TopAppBar(
-                title = { Text("Data Department", fontWeight = FontWeight.Bold, fontSize = 18.sp) },
+                title = { Text("Data Permission Categories", fontWeight = FontWeight.Bold, fontSize = 18.sp) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Kembali")
@@ -159,62 +158,61 @@ fun DepartmentScreen(
                 }
             )
         }
-    ) { innerPadding ->
+    ) { innerpadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(innerpadding)
                 .padding(horizontal = 20.dp)
         ) {
             Spacer(modifier = Modifier.height(8.dp))
-
             when (val dataStatus = state.dataState) {
                 is UiState.Idle, is UiState.Loading -> {
                     SearchableDataList(
-                        items = emptyList<Department>(),
+                        items = emptyList<PermissionCategories>(),
                         isLoading = true,
                         searchQuery = searchQuery,
                         onSearchQueryChange = { searchQuery = it },
-                        searchPlaceholder = "Cari department...",
+                        searchPlaceholder = "Cari kategori...",
                         skeletonItem = { BaseSkeletonCard() },
                         listItem = {}
                     )
                 }
 
                 is UiState.Success -> {
-                    val filteredDepartments = dataStatus.data.filter {
+                    val filteredPermissionCategories = dataStatus.data.filter {
                         it.name.contains(searchQuery, ignoreCase = true) ||
                                 it.description.contains(searchQuery, ignoreCase = true)
                     }
 
                     SearchableDataList(
-                        items = filteredDepartments,
+                        items = filteredPermissionCategories,
                         isLoading = false,
                         searchQuery = searchQuery,
                         onSearchQueryChange = { searchQuery = it },
-                        searchPlaceholder = "Cari department...",
-                        emptyMessage = "Tidak ada department yang cocok.",
+                        searchPlaceholder = "Cari kategori...",
+                        emptyMessage = "Tidak ada kategori yang cocok.",
                         skeletonItem = { BaseSkeletonCard() },
-                        listItem = { dept ->
+                        listItem = { permissionCategory ->
 
-                            var editName by remember(dept) { mutableStateOf(dept.name) }
-                            var editDesc by remember(dept) { mutableStateOf(dept.description) }
+                            var editName by remember(permissionCategory) { mutableStateOf(permissionCategory.name) }
+                            var editDesc by remember(permissionCategory) { mutableStateOf(permissionCategory.description) }
 
                             BaseMasterCard(
-                                title = dept.name,
-                                description = dept.description,
-                                formTitle = "Edit Department",
+                                title = permissionCategory.name,
+                                description = permissionCategory.description,
+                                formTitle = "Edit Permission Category",
                                 isActionLoading = state.isActionLoading,
                                 actionSuccess = state.actionSuccess,
                                 onResetActionState = { viewModel.resetActionState() },
                                 onDeleteClick = {
                                     currentAction = "delete"
-                                    departmentToDelete = dept
+                                    permissionCategoriesToDelete = permissionCategory
                                 },
                                 onSaveEdit = {
                                     currentAction = "update"
-                                    viewModel.updateDepartment(
-                                        id = dept.id,
+                                    viewModel.updatePermissionCategory(
+                                        id = permissionCategory.id,
                                         name = editName,
                                         description = editDesc
                                     )
@@ -226,15 +224,13 @@ fun DepartmentScreen(
                                         editName = it
                                         viewModel.clearNameError()
                                     },
-                                    placeholder = "Nama Department",
+                                    placeholder = "Nama Permission Categories",
                                     modifier = Modifier.fillMaxWidth(),
                                     enabled = !state.isActionLoading,
                                     isError = nameErrorText.isNotEmpty(),
                                     errorText = nameErrorText
                                 )
-
                                 Spacer(modifier = Modifier.height(16.dp))
-
                                 CustomTextField(
                                     value = editDesc,
                                     onValueChange = {
@@ -267,7 +263,7 @@ fun DepartmentScreen(
                             modifier = Modifier
                                 .width(150.dp)
                                 .padding(top = 14.dp),
-                            onClick = { viewModel.fetchDepartments() }
+                            onClick = { viewModel.fetchPermissionCategories() }
                         )
                     }
                 }
@@ -277,14 +273,14 @@ fun DepartmentScreen(
 
     if (showBottomSheet) {
         FormBottomSheet(
-            title = "Tambah Department",
+            title = "Tambah Permission Category",
             isLoading = state.isActionLoading,
             onDismiss = {
                 showBottomSheet = false
                 viewModel.resetActionState()
             },
             onSave = {
-                viewModel.insertDepartment(inputName, inputDesc)
+                viewModel.insertPermissionCategories(inputName, inputDesc)
             }
         ) {
             CustomTextField(
@@ -293,7 +289,7 @@ fun DepartmentScreen(
                     inputName = it
                     viewModel.clearNameError()
                 },
-                placeholder = "Nama Department",
+                placeholder = "Nama Permission Categories",
                 singleLine = true,
                 enabled = !state.isActionLoading,
                 isError = nameErrorText.isNotEmpty(),
@@ -318,12 +314,12 @@ fun DepartmentScreen(
         }
     }
 
-    departmentToDelete?.let { dept ->
+    permissionCategoriesToDelete?.let { dept ->
         ConfirmDeleteDialog(
             itemName = dept.name,
-            onDismiss = { departmentToDelete = null },
+            onDismiss = { permissionCategoriesToDelete = null },
             onConfirm = {
-                viewModel.deleteDepartment(dept.id)
+                viewModel.deletePermissionCategories(dept.id)
             }
         )
     }

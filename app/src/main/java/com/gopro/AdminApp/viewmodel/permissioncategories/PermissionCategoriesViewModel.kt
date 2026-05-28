@@ -194,6 +194,21 @@ class PermissionCategoriesViewModel: ViewModel() {
     }
 
 
+    fun clearNameError(){
+        _state.update { it.copy(fieldErrors = it.fieldErrors-"Name") }
+    }
+
+    fun clearDescError(){
+        _state.update { it.copy(fieldErrors = it.fieldErrors - "Description") }
+    }
+
+    fun clearGeneralError() {
+        _state.update { it.copy(actionErrorMessage = null) }
+    }
+
+    fun resetActionState() {
+        _state.update { it.copy(actionSuccess = false, actionErrorMessage = null, fieldErrors = emptyMap()) }
+    }
 
 
 
