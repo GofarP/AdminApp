@@ -11,10 +11,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.gopro.AdminApp.data.local.TokenManager
-import com.gopro.AdminApp.model.presentation.screens.PermissionCategoriesScreen
 import com.gopro.AdminApp.presentation.screens.DashboardScreen
-import com.gopro.AdminApp.presentation.screens.DepartmentScreen
 import com.gopro.AdminApp.presentation.screens.LoginScreen
+import com.gopro.AdminApp.model.presentation.masterDataGraph
 
 @Composable
 fun AppNavigation() {
@@ -52,13 +51,15 @@ fun AppNavigation() {
         }
 
         composable("dashboard") {
+            val dashboardContext = LocalContext.current
+
             DashboardScreen(
                 onNavigate = { routeId ->
                     try {
                         val targetRoute = routeId.removePrefix("nav_")
                         navController.navigate(targetRoute)
                     } catch (e: IllegalArgumentException) {
-                        Toast.makeText(context, "Layar belum tersedia", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(dashboardContext, "Layar belum tersedia", Toast.LENGTH_SHORT).show()
                         println("Gagal navigasi: Rute '$routeId' belum didaftarkan di NavHost.")
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -72,20 +73,7 @@ fun AppNavigation() {
             )
         }
 
-        composable("department") {
-            DepartmentScreen(
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
-            )
-        }
+        masterDataGraph(navController)
 
-        composable("permission_categories") {
-            PermissionCategoriesScreen(
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
-            )
-        }
     }
 }

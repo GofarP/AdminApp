@@ -1,4 +1,4 @@
-package com.gopro.AdminApp.model.dto.response.PermissionCategories
+package com.gopro.AdminApp.model.dto.response.permissioncategories
 
 import com.gopro.AdminApp.model.entity.Pagination
 import com.gopro.AdminApp.model.entity.PermissionCategories

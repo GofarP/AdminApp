@@ -1,8 +1,7 @@
 package com.gopro.AdminApp.network.permissioncategory
 
-import com.gopro.AdminApp.model.dto.request.DepartmentRequest
 import com.gopro.AdminApp.model.dto.request.permissioncategories.PermissionCategoriesRequest
-import com.gopro.AdminApp.model.dto.response.PermissionCategories.PermissionCategoryResponse
+import com.gopro.AdminApp.model.dto.response.permissioncategories.PermissionCategoryResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

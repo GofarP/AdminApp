@@ -49,7 +49,7 @@ fun DashboardScreen(
             MenuItem("nav_permission_categories", "Permission Cat.", Icons.Outlined.Category, accentColor = Teal),
             MenuItem("nav_permission", "Permission", Icons.Outlined.AdminPanelSettings, accentColor = Teal),
             MenuItem("nav_role", "Role", Icons.Outlined.ManageAccounts, accentColor = Amber),
-            MenuItem("nav_item_cat", "Item Category", Icons.Outlined.Inventory2, accentColor = Coral),
+            MenuItem("nav_item_categories", "Item Category", Icons.Outlined.Inventory2, accentColor = Coral),
         )),
         MenuGroup("Item", listOf(
             MenuItem("nav_item", "Item", Icons.Outlined.LocalCafe, accentColor = Amber, badge = "12")
