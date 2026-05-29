@@ -28,7 +28,10 @@ import com.gopro.AdminApp.ui.theme.BrandLight
 
 
 @Composable
-fun HeroCard() {
+fun HeroCard(
+    fullName: String,
+    role: String
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -52,7 +55,7 @@ fun HeroCard() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text("Administrator", fontSize = 13.sp, color = Color.White.copy(.8f))
+                Text(fullName, fontSize = 13.sp, color = Color.White.copy(.8f))
                 Text("Selamat Datang Kembali!", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
                 Spacer(Modifier.height(8.dp))
                 Row(
@@ -64,11 +67,11 @@ fun HeroCard() {
                             .clip(RoundedCornerShape(20.dp))
                             .background(Color.White.copy(.25f))
                             .padding(horizontal = 10.dp, vertical = 4.dp)
-                    ) { Text("ADMIN", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White) }
-
+                    ) {
+                        Text(role.uppercase(), fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    }
                 }
             }
-
         }
     }
 }

@@ -1,11 +1,8 @@
 package com.gopro.AdminApp.presentation.screens
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -188,7 +185,6 @@ fun VendingMachineScreen(
                             var editIsActive by remember(machine) { mutableStateOf(machine.isActive) }
                             var editLastRestock by remember(machine) { mutableStateOf(machine.lastRestock) }
 
-                            var editDropdownExpanded by remember { mutableStateOf(false) }
                             var showEditDatePicker by remember { mutableStateOf(false) }
                             val editDatePickerState = rememberDatePickerState()
 
@@ -262,71 +258,29 @@ fun VendingMachineScreen(
 
                                 Spacer(modifier = Modifier.height(12.dp))
 
-                                ExposedDropdownMenuBox(
-                                    expanded = editDropdownExpanded,
-                                    onExpandedChange = { if (!state.isActionLoading) editDropdownExpanded = !editDropdownExpanded }
-                                ) {
-                                    OutlinedTextField(
-                                        value = if (editIsActive) "Aktif" else "Tidak Aktif",
-                                        onValueChange = {},
-                                        readOnly = true,
-                                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = editDropdownExpanded) },
-                                        modifier = Modifier
-                                            .menuAnchor()
-                                            .fillMaxWidth(),
-                                        label = { Text("Status Mesin") },
-                                        enabled = !state.isActionLoading,
-                                        isError = isActiveErrorText.isNotEmpty(),
-                                        supportingText = if (isActiveErrorText.isNotEmpty()) { { Text(isActiveErrorText) } } else null
-                                    )
-                                    ExposedDropdownMenu(
-                                        expanded = editDropdownExpanded,
-                                        onDismissRequest = { editDropdownExpanded = false }
-                                    ) {
-                                        DropdownMenuItem(
-                                            text = { Text("Aktif") },
-                                            onClick = {
-                                                editIsActive = true
-                                                editDropdownExpanded = false
-                                                viewModel.clearIsActive()
-                                            }
-                                        )
-                                        DropdownMenuItem(
-                                            text = { Text("Tidak Aktif") },
-                                            onClick = {
-                                                editIsActive = false
-                                                editDropdownExpanded = false
-                                                viewModel.clearIsActive()
-                                            }
-                                        )
-                                    }
-                                }
+                                CustomSelect(
+                                    selectedOption = editIsActive,
+                                    options = listOf(true, false),
+                                    displayMapper = { if (it) "Aktif" else "Tidak Aktif" },
+                                    onOptionSelected = {
+                                        editIsActive = it
+                                        viewModel.clearIsActive()
+                                    },
+                                    placeholder = "Status Mesin",
+                                    enabled = !state.isActionLoading,
+                                    isError = isActiveErrorText.isNotEmpty(),
+                                    errorText = isActiveErrorText
+                                )
 
                                 Spacer(modifier = Modifier.height(12.dp))
 
-                                OutlinedTextField(
+                                CustomDatePickerField(
                                     value = editLastRestock,
-                                    onValueChange = {},
-                                    readOnly = true,
-                                    label = { Text("Last Restock") },
-                                    trailingIcon = { Icon(Icons.Outlined.CalendarToday, contentDescription = "Pilih Tanggal") },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable(
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            indication = null
-                                        ) {
-                                            if (!state.isActionLoading) showEditDatePicker = true
-                                        },
-                                    enabled = false,
-                                    colors = OutlinedTextFieldDefaults.colors(
-                                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                                        disabledBorderColor = MaterialTheme.colorScheme.outline,
-                                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
-                                    ),
+                                    placeholder = "Last Restock",
+                                    onClick = { if (!state.isActionLoading) showEditDatePicker = true },
+                                    enabled = !state.isActionLoading,
                                     isError = restockErrorText.isNotEmpty(),
-                                    supportingText = if (restockErrorText.isNotEmpty()) { { Text(restockErrorText) } } else null
+                                    errorText = restockErrorText
                                 )
 
                                 if (showEditDatePicker) {
@@ -439,74 +393,29 @@ fun VendingMachineScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            var insertDropdownExpanded by remember { mutableStateOf(false) }
-            ExposedDropdownMenuBox(
-                expanded = insertDropdownExpanded,
-                onExpandedChange = { if (!state.isActionLoading) insertDropdownExpanded = !insertDropdownExpanded }
-            ) {
-                OutlinedTextField(
-                    value = if (selectIsActive) "Aktif" else "Tidak Aktif",
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = insertDropdownExpanded) },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth(),
-                    label = { Text("Status Mesin") },
-                    enabled = !state.isActionLoading,
-                    isError = isActiveErrorText.isNotEmpty(),
-                    supportingText = if (isActiveErrorText.isNotEmpty()) { { Text(isActiveErrorText) } } else null
-                )
-                ExposedDropdownMenu(
-                    expanded = insertDropdownExpanded,
-                    onDismissRequest = { insertDropdownExpanded = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Aktif") },
-                        onClick = {
-                            selectIsActive = true
-                            insertDropdownExpanded = false
-                            viewModel.clearIsActive()
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Tidak Aktif") },
-                        onClick = {
-                            selectIsActive = false
-                            insertDropdownExpanded = false
-                            viewModel.clearIsActive()
-                        }
-                    )
-                }
-            }
+            CustomSelect(
+                selectedOption = selectIsActive,
+                options = listOf(true, false),
+                displayMapper = { if (it) "Aktif" else "Tidak Aktif" },
+                onOptionSelected = {
+                    selectIsActive = it
+                    viewModel.clearIsActive()
+                },
+                placeholder = "Status Mesin",
+                enabled = !state.isActionLoading,
+                isError = isActiveErrorText.isNotEmpty(),
+                errorText = isActiveErrorText
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
+            CustomDatePickerField(
                 value = inputLastRestock,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Last Restock") },
-                placeholder = { Text("Pilih Tanggal") },
-                trailingIcon = { Icon(Icons.Outlined.CalendarToday, contentDescription = "Pilih Tanggal") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
-                        if (!state.isActionLoading) showInsertDatePicker = true
-                    },
-                enabled = false,
-                colors = OutlinedTextFieldDefaults.colors(
-                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                    disabledBorderColor = MaterialTheme.colorScheme.outline,
-                    disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant
-                ),
+                placeholder = "Last Restock",
+                onClick = { if (!state.isActionLoading) showInsertDatePicker = true },
+                enabled = !state.isActionLoading,
                 isError = restockErrorText.isNotEmpty(),
-                supportingText = if (restockErrorText.isNotEmpty()) { { Text(restockErrorText) } } else null
+                errorText = restockErrorText
             )
 
             if (showInsertDatePicker) {

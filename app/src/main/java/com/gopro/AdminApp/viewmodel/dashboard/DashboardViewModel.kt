@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -40,6 +41,16 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     val userPhoto: StateFlow<String?> = sessionManager.userPhotoFlow
         .stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = null)
+
+    val userRole: StateFlow<String> = sessionManager.rolesFlow
+        .map { rolesList ->
+            rolesList.firstOrNull() ?: "-"
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = "-"
+        )
 
     fun fetchStats(){
         viewModelScope.launch {

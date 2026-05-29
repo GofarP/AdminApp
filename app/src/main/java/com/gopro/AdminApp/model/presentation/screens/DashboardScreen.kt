@@ -38,6 +38,7 @@ fun DashboardScreen(
 
     val userName by viewModel.userName.collectAsState()
     val userPhoto by viewModel.userPhoto.collectAsState()
+    val useRole by viewModel.userRole.collectAsState()
 
     val menuGroups = listOf(
         MenuGroup("Utama", listOf(
@@ -55,7 +56,7 @@ fun DashboardScreen(
             MenuItem("nav_item", "Item", Icons.Outlined.LocalCafe, accentColor = Amber, badge = "12")
         )),
         MenuGroup("Vending Machine", listOf(
-            MenuItem("nav_vending_machine", "Vending Machine", Icons.Outlined.SmartScreen, accentColor = BrandLight, badge = "3"),
+            MenuItem("nav_vending_machine", "Vending Machine", Icons.Outlined.SmartScreen, accentColor = BrandLight),
             MenuItem("nav_vending_item", "Vending Item", Icons.Outlined.BreakfastDining, accentColor = Coral),
         )),
         MenuGroup("Logout", listOf(
@@ -94,7 +95,7 @@ fun DashboardScreen(
                 userName = userName,
                 photoUrl = userPhoto
             )
-            HeroCard()
+            HeroCard(fullName = userName, role =useRole )
             Spacer(Modifier.height(20.dp))
             SectionLabel("Ringkasan Statistik")
             Spacer(Modifier.height(10.dp))
