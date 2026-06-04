@@ -56,7 +56,7 @@ fun UserAvatar(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Brush.linearGradient(listOf(Brand, Accent))), // Pastikan Brand & Accent sudah di-import
+                    .background(Brush.linearGradient(listOf(Brand, Accent))),
                 contentAlignment = Alignment.Center
             ) {
                 Text(

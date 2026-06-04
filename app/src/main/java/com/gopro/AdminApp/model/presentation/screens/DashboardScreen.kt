@@ -23,7 +23,7 @@ import com.gopro.AdminApp.model.presentation.StatItem
 import com.gopro.AdminApp.presentation.state.UiState
 import com.gopro.AdminApp.ui.theme.*
 import com.gopro.AdminApp.ui.theme.components.*
-import com.gopro.AdminApp.viewmodel.dashboard.DashboardViewModel
+import com.gopro.AdminApp.viewmodel.DashboardViewModel
 
 @Composable
 fun DashboardScreen(
@@ -41,9 +41,7 @@ fun DashboardScreen(
     val useRole by viewModel.userRole.collectAsState()
 
     val menuGroups = listOf(
-        MenuGroup("Utama", listOf(
-            MenuItem("nav_dashboard", "Dashboard", Icons.Outlined.Dashboard, accentColor = Brand)
-        )),
+
         MenuGroup("Data Master", listOf(
             MenuItem("nav_employee", "Employee", Icons.Outlined.People, accentColor = BrandLight),
             MenuItem("nav_department", "Department", Icons.Outlined.AccountTree, accentColor = Purple),
@@ -53,11 +51,14 @@ fun DashboardScreen(
             MenuItem("nav_item_categories", "Item Category", Icons.Outlined.Inventory2, accentColor = Coral),
         )),
         MenuGroup("Item", listOf(
-            MenuItem("nav_item", "Item", Icons.Outlined.LocalCafe, accentColor = Amber, badge = "12")
+            MenuItem("nav_item", "Item", Icons.Outlined.LocalCafe, accentColor = Amber)
         )),
         MenuGroup("Vending Machine", listOf(
             MenuItem("nav_vending_machine", "Vending Machine", Icons.Outlined.SmartScreen, accentColor = BrandLight),
             MenuItem("nav_vending_item", "Vending Item", Icons.Outlined.BreakfastDining, accentColor = Coral),
+        )),
+        MenuGroup("Settings",listOf(
+            MenuItem("nav_setting","Setting",Icons.Outlined.Settings, accentColor = Amber),
         )),
         MenuGroup("Logout", listOf(
             MenuItem("action_logout", "Logout", Icons.Outlined.Logout, accentColor = Error)

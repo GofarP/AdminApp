@@ -18,10 +18,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.gopro.AdminApp.model.dto.request.auth.LoginRequest
+import com.gopro.AdminApp.model.dto.request.LoginRequest
 import com.gopro.AdminApp.ui.theme.components.CustomButton
 import com.gopro.AdminApp.ui.theme.components.CustomTextField
-import com.gopro.AdminApp.viewmodel.auth.AuthViewModel
+import com.gopro.AdminApp.viewmodel.AuthViewModel
 
 import androidx.compose.runtime.collectAsState
 

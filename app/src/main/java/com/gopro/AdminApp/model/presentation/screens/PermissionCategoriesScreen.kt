@@ -52,7 +52,7 @@ import com.gopro.AdminApp.ui.theme.components.CustomSnackbarVisuals
 import com.gopro.AdminApp.ui.theme.components.CustomTextField
 import com.gopro.AdminApp.ui.theme.components.FloatingButton
 import com.gopro.AdminApp.ui.theme.components.SnackbarType
-import com.gopro.AdminApp.viewmodel.permissioncategories.PermissionCategoriesViewModel
+import com.gopro.AdminApp.viewmodel.PermissionCategoriesViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -193,6 +193,7 @@ fun PermissionCategoriesScreen(
                         searchPlaceholder = "Cari kategori...",
                         emptyMessage = "Tidak ada kategori yang cocok.",
                         skeletonItem = { BaseSkeletonCard() },
+                        onRefresh = {viewModel.fetchPermissionCategories()},
                         listItem = { permissionCategory ->
 
                             var editName by remember(permissionCategory) { mutableStateOf(permissionCategory.name) }

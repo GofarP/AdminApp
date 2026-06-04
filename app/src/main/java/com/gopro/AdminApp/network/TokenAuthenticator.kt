@@ -4,8 +4,8 @@ import android.content.Context
 import com.gopro.AdminApp.BuildConfig
 import com.gopro.AdminApp.data.local.TokenManager
 import com.gopro.AdminApp.data.local.UserSessionManager
-import com.gopro.AdminApp.model.dto.request.refreshtoken.RefreshTokenRequest
-import com.gopro.AdminApp.network.tokenrefresh.TokenRefreshApi
+import com.gopro.AdminApp.model.dto.request.RefreshTokenRequest
+import com.gopro.AdminApp.network.TokenRefreshApi
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request

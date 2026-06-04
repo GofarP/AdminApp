@@ -54,7 +54,7 @@ import com.gopro.AdminApp.ui.theme.components.CustomSnackbarVisuals
 import com.gopro.AdminApp.ui.theme.components.CustomTextField
 import com.gopro.AdminApp.ui.theme.components.FloatingButton
 import com.gopro.AdminApp.ui.theme.components.SnackbarType
-import com.gopro.AdminApp.viewmodel.itemcategories.ItemCategoriesViewModel
+import com.gopro.AdminApp.viewmodel.ItemCategoriesViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -196,6 +196,7 @@ fun ItemCategoriesScreen(
                         onSearchQueryChange = { searchQuery = it },
                         emptyMessage = "Tidak Ada Kategori Yang Cocok.",
                         skeletonItem = {BaseSkeletonCard()},
+                        onRefresh = {viewModel.fetchItemCategories()},
                         listItem = {itemCategories ->
                             var editName by remember(itemCategories) { mutableStateOf(itemCategories.name) }
                             var editDesc by remember(itemCategories) { mutableStateOf(itemCategories.description) }

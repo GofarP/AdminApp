@@ -18,7 +18,6 @@ class UserSessionManager(private val context: Context) {
     private val FULL_NAME = stringPreferencesKey("full_name")
     private val ROLES = stringPreferencesKey("roles")
     private val PERMISSIONS = stringPreferencesKey("permissions")
-
     private val PHOTO_URL = stringPreferencesKey("photo_url")
 
     suspend fun saveSession(email: String, name: String, roles: List<String>, perms: List<String>,photoUrl: String?) {
@@ -56,5 +55,24 @@ class UserSessionManager(private val context: Context) {
 
     suspend fun clear() {
         context.dataStore.edit { it.clear() }
+    }
+
+
+    suspend fun saveUserName(name: String) {
+        context.dataStore.edit { preferences ->
+            preferences[FULL_NAME] = name
+        }
+    }
+
+    suspend fun saveUserEmail(email: String) {
+        context.dataStore.edit { preferences ->
+            preferences[EMAIL] = email
+        }
+    }
+
+    suspend fun saveUserPhoto(photoUrl: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PHOTO_URL] = photoUrl
+        }
     }
 }

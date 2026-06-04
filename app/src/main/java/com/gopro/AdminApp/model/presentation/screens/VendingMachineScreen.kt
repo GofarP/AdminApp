@@ -20,7 +20,7 @@ import com.gopro.AdminApp.ui.components.SearchableDataList
 import com.gopro.AdminApp.ui.theme.Background
 import com.gopro.AdminApp.ui.theme.Error
 import com.gopro.AdminApp.ui.theme.components.*
-import com.gopro.AdminApp.viewmodel.vendingmachine.VendingMachineViewModel
+import com.gopro.AdminApp.viewmodel.VendingMachineViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -177,6 +177,7 @@ fun VendingMachineScreen(
                         searchPlaceholder = "Cari mesin...",
                         emptyMessage = "Tidak ada mesin yang cocok.",
                         skeletonItem = { BaseSkeletonCard() },
+                        onRefresh = {viewModel.fetchVendingMachine()},
                         listItem = { machine ->
 
                             var editMachineCode by remember(machine) { mutableStateOf(machine.machineCode) }

@@ -9,8 +9,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,10 +29,14 @@ import com.gopro.AdminApp.ui.theme.TextPri
 import com.gopro.AdminApp.ui.theme.TextSec
 import com.gopro.AdminApp.ui.theme.components.CustomTextField
 import kotlinx.coroutines.delay
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun<T> SearchableDataList(
-    items:List<T>,
+    items: List<T>,
     isLoading: Boolean,
+    isRefreshing: Boolean = false,
+    onRefresh: () -> Unit = {},
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     searchPlaceholder: String = "Cari data...",
@@ -39,23 +45,11 @@ fun<T> SearchableDataList(
     debounceTimeout: Long = 500L,
     skeletonItem: @Composable () -> Unit,
     listItem: @Composable (item: T) -> Unit
-){
-    var internalQuery by remember { mutableStateOf(searchQuery) }
-
-    LaunchedEffect(searchQuery) {
-        if(internalQuery!=searchQuery){
-            internalQuery=searchQuery
-        }
-    }
+) {
+    var internalQuery by remember(searchQuery) { mutableStateOf(searchQuery) }
 
     LaunchedEffect(internalQuery) {
-        if(internalQuery!=searchQuery){
-            delay(debounceTimeout)
-        }
-    }
-
-    LaunchedEffect(internalQuery) {
-        if(internalQuery!=searchQuery){
+        if (internalQuery != searchQuery) {
             delay(debounceTimeout)
             onSearchQueryChange(internalQuery)
         }
@@ -63,8 +57,8 @@ fun<T> SearchableDataList(
 
     Column(modifier = Modifier.fillMaxSize()) {
         CustomTextField(
-            value = searchQuery,
-            onValueChange = onSearchQueryChange,
+            value = internalQuery,
+            onValueChange = { internalQuery = it },
             placeholder = searchPlaceholder,
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -80,67 +74,73 @@ fun<T> SearchableDataList(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
             modifier = Modifier.fillMaxSize()
         ) {
-            when{
-                isLoading->{
-                    items(skeletonRowCount) { skeletonItem() }
-                }
-                items.isEmpty() -> {
-                    item {
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(vertical = 64.dp, horizontal = 24.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Box(
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                when {
+                    isLoading -> {
+                        items(skeletonRowCount) { skeletonItem() }
+                    }
+                    items.isEmpty() -> {
+                        item {
+                            Column(
                                 modifier = Modifier
-                                    .size(80.dp)
-                                    .background(CardBg, shape = CircleShape)
-                                    .padding(16.dp),
-                                contentAlignment = Alignment.Center
-                            ){
-                                Icon(
-                                    imageVector = Icons.Outlined.Inbox,
-                                    contentDescription = "Data Kosong",
-                                    tint = Brand,
-                                    modifier = Modifier.size(40.dp)
+                                    .fillMaxWidth()
+                                    .padding(vertical = 64.dp, horizontal = 24.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(80.dp)
+                                        .background(CardBg, shape = CircleShape)
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Inbox,
+                                        contentDescription = "Data Kosong",
+                                        tint = Brand,
+                                        modifier = Modifier.size(40.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                Text(
+                                    text = "Tidak Ada Data",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextPri,
+                                    textAlign = TextAlign.Center
+                                )
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Text(
+                                    text = emptyMessage,
+                                    fontSize = 13.sp,
+                                    color = TextSec,
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = 18.sp,
+                                    modifier = Modifier.padding(horizontal = 16.dp)
                                 )
                             }
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text(
-                                text = "Tidak Ada Data",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = TextPri,
-                                textAlign = TextAlign.Center
-                            )
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            Text(
-                                text = emptyMessage,
-                                fontSize = 13.sp,
-                                color = TextSec,
-                                textAlign = TextAlign.Center,
-                                lineHeight = 18.sp,
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                            )
-
+                        }
+                    }
+                    else -> {
+                        items(items) { itemData ->
+                            listItem(itemData)
                         }
                     }
                 }
-                else -> {
-                    items(items) { itemData ->
-                        listItem(itemData)
-                    }
-                }
+                item { Spacer(modifier = Modifier.height(80.dp)) }
             }
-            item { Spacer(modifier = Modifier.height(80.dp)) }
         }
     }
 }

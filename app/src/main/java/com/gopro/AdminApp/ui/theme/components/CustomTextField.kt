@@ -9,6 +9,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -78,15 +83,16 @@ fun CustomTextField(
             ),
             trailingIcon = {
                 if (isPassword) {
-                    Text(
-                        text = if (passwordVisible) "HIDE" else "SHOW",
-                        color = if (isError) Color(0xFFEF4444) else Color(0xFF0F62FE),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .clickable { passwordVisible = !passwordVisible }
-                    )
+                    IconButton(
+                        onClick = { passwordVisible = !passwordVisible },
+                        modifier = Modifier.padding(end = 4.dp) // Adjusted padding since IconButton has its own built-in ripple padding
+                    ) {
+                        Icon(
+                            imageVector = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                            contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                            tint = if (isError) Color(0xFFEF4444) else Color(0xFF0F62FE) // Keeps your custom error/primary colors
+                        )
+                    }
                 }
             }
         )

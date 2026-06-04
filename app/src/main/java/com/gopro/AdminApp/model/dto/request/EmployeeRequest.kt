@@ -1,0 +1,20 @@
+package com.gopro.AdminApp.model.dto.request
+
+import com.google.gson.annotations.SerializedName
+
+data class EmployeeRequest (
+    @SerializedName("Id")
+    val id: String?=null,
+
+    @SerializedName("FullName")
+    val fullName: String?,
+
+    @SerializedName("Email")
+    val email:String?,
+
+    @SerializedName("Password")
+    val password: String?,
+
+    @SerializedName("RoleId")
+    val roleId: String
+)

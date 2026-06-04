@@ -1,7 +1,7 @@
 package com.gopro.AdminApp.utils
 
 import com.google.gson.Gson
-import com.gopro.AdminApp.model.dto.response.error.ErrorResponse
+import com.gopro.AdminApp.model.dto.response.ErrorResponse
 import retrofit2.Response
 
 data class ApiErrorResult(

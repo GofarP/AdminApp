@@ -52,7 +52,7 @@ import com.gopro.AdminApp.ui.theme.components.CustomSnackbarVisuals
 import com.gopro.AdminApp.ui.theme.components.CustomTextField
 import com.gopro.AdminApp.ui.theme.components.FloatingButton
 import com.gopro.AdminApp.ui.theme.components.SnackbarType
-import com.gopro.AdminApp.viewmodel.department.DepartmentViewModel
+import com.gopro.AdminApp.viewmodel.DepartmentViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -195,6 +195,7 @@ fun DepartmentScreen(
                         searchPlaceholder = "Cari department...",
                         emptyMessage = "Tidak ada department yang cocok.",
                         skeletonItem = { BaseSkeletonCard() },
+                        onRefresh = {viewModel.fetchDepartments()},
                         listItem = { dept ->
 
                             var editName by remember(dept) { mutableStateOf(dept.name) }
